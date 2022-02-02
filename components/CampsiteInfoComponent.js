@@ -24,10 +24,16 @@ function RenderCampsite(props) {
 
     const {campsite} = props;
 
+    const view = React.createRef();
+
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+            view.current.rubberBand(1000)
+            .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
+        },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pand responder end', gestureState);
             if (recognizeDrag(gestureState)) {
@@ -43,7 +49,7 @@ function RenderCampsite(props) {
                         {
                             text: 'OK',
                             onPress: () => props.favorite ? 
-                                console.loog('Already set as a favorite') : props.markFavorite()
+                                console.log('Already set as a favorite') : props.markFavorite()
                         }
                     ],
                     { cancelable: false }
@@ -60,6 +66,7 @@ function RenderCampsite(props) {
                 animation='fadeInDown' 
                 duration={2000} 
                 delay={1000}
+                ref={view}
                 {...panResponder.panHandlers}
                 >
                 <Card
